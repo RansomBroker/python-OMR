@@ -36,9 +36,9 @@ def process_image_with_brightness_and_circles(template_image, image_path):
 
     # Display images
     #display_image(adjusted_img)  # Show image with adjusted brightness
-    display_image(cropped_image_with_margin)  # Show cropped image with detected circles
-    display_image(template_with_rectangles)  # Show template image with rectangles
-    display_image(template_cropped_image_with_margin)  # Show cropped template image
+    # display_image(cropped_image_with_margin)  # Show cropped image with detected circles
+    # display_image(template_with_rectangles)  # Show template image with rectangles
+    # display_image(template_cropped_image_with_margin)  # Show cropped template image
 
     # Align Image
     aligned_image = align_images(cropped_image_with_margin, template_cropped_image_with_margin, debug=False)
@@ -49,10 +49,17 @@ def process_image_with_brightness_and_circles(template_image, image_path):
 
     # If dark circles are detected, draw them on the aligned image in red
     for (x, y, r) in dark_circles_in_aligned_image:
-        cv2.circle(aligned_image, (x, y), r, (0, 0, 255), 4)  # Red circles
+        cv2.circle(aligned_image, (x, y), r, (0, 0, 255), 4)
 
     # Display aligned image with dark circles
-    display_image(aligned_image)  # Show aligned image with red circles
+    # display_image(aligned_image)  
+
+    # Matched Answer
+    answer_selected = find_matching_answer("answer_position.json", dark_circles_in_aligned_image)
+
+    return answer_selected
+
+   
 
 # Run the full processing pipeline on the image with brightness adjustment
 image_path = 'images\lembar valid1.jpg'  # Adjust the path as necessary

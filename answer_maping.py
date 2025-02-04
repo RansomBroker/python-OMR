@@ -18,6 +18,9 @@ def click_event(event, x, y, flags, params):
         cv2.putText(img, str(x) + ',' + str(y), (x, y), font, 0.25, (255, 0, 0), 2) 
         cv2.imshow('image', img) 
   
+        # Menyimpan koordinat ke dalam array saat klik kiri
+        current_coordinates.append([x, y])
+        
     # checking for right mouse clicks      
     if event == cv2.EVENT_RBUTTONDOWN: 
         # displaying the coordinates on the Shell 
@@ -29,12 +32,7 @@ def click_event(event, x, y, flags, params):
         r = img[y, x, 2] 
         cv2.putText(img, str(b) + ',' + str(g) + ',' + str(r), (x, y), font, 0.25, (255, 255, 0), 2) 
         cv2.imshow('image', img)
-        
-    # Menyimpan koordinat ke dalam array saat klik
-    if flags & cv2.EVENT_FLAG_LBUTTON:
-        # Simpan urutan koordinat ke list
-        current_coordinates.append([x,y])
-        
+
 # Fungsi untuk mendeteksi saat tombol Enter ditekan dan menyimpan hasil
 def process_image_with_brightness_and_circles(template_image):
     # Menampilkan gambar yang telah diproses
@@ -59,13 +57,14 @@ def process_image_with_brightness_and_circles(template_image):
         key = cv2.waitKey(1) & 0xFF
         if key == 13:  # Tombol Enter (ASCII 13)
             # Simpan current coordinates ke coordinates
-            coordinates.append(current_coordinates)
-            # Reset current coordinates
-            current_coordinates = []
-            print("Data saved:", coordinates)  # Menampilkan data koordinat yang sudah disimpan
+            if current_coordinates:  # Hanya simpan jika current_coordinates tidak kosong
+                coordinates.append(current_coordinates)
+                # Reset current coordinates
+                current_coordinates = []
+                print("Data saved:", coordinates)  # Menampilkan data koordinat yang sudah disimpan
         elif key == 27:  # Tombol ESC (ASCII 27)
             # Menyimpan data koordinat ke dalam file JSON saat tombol ESC ditekan
-            with open("answer_position.json", "w") as json_file:
+            with open("answer_position1.json", "w") as json_file:
                 json.dump(coordinates, json_file, indent=4)
             print("Data saved to answer_position.json")
             break
