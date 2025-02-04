@@ -1,9 +1,9 @@
 from flask import Flask
-from routes import api  # Mengimpor blueprint dari routes.py
+from routes import api  # Import blueprint
 
 app = Flask(__name__)
 
-# Registrasi blueprint tanpa prefix atau dengan prefix jika diinginkan
+# Register blueprint without prefix or with prefix if desired
 app.register_blueprint(api)
 
 if __name__ == '__main__':

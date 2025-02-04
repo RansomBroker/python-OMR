@@ -3,14 +3,14 @@ from flask import Blueprint, request, jsonify
 from werkzeug.utils import secure_filename
 from main import scan_answer
 
-# Buat blueprint untuk mengorganisir routes
+# Create a blueprint to organize routes
 api = Blueprint('api', __name__)
 
-# Konfigurasi folder upload dan ekstensi yang diperbolehkan
+# Configure the upload folder and allowed extensions
 UPLOAD_FOLDER = 'images/ljk'
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg'}
 
-# Pastikan folder tujuan ada
+# Make sure the destination folder exists
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
@@ -20,38 +20,31 @@ def allowed_file(filename):
 
 @api.route('/api/upload', methods=['POST'])
 def upload_file():
-    # Cek apakah ada file yang dikirim
+    # Check if there is a file being sent
     if 'image' not in request.files:
         return jsonify({'error': 'Tidak ada file gambar yang diunggah'}), 400
 
     file = request.files['image']
     
-    # Ambil data tambahan dari form
+    # Retrieve additional data from the form
     name = request.form.get('name')
     id_value = request.form.get('id')
 
     if not name or not id_value:
         return jsonify({'error': 'Data nama dan id harus disertakan'}), 400
 
-    # Jika tidak ada file yang dipilih
+    # If no file is selected
     if file.filename == '':
         return jsonify({'error': 'Nama file kosong'}), 400
 
-    # Proses file jika memenuhi persyaratan
+    # Process the file if it meets the requirements
     if file and allowed_file(file.filename):
-        # Mengamankan nama file
+        # Secure the filename to prevent directory traversal
         filename = secure_filename(file.filename)
         filepath = os.path.join(UPLOAD_FOLDER, filename)
         
-        # Simpan file ke folder yang telah ditentukan
+        # Save the file
         file.save(filepath)
-
-        # Simpan data (misalnya ke database, di sini kita hanya mengembalikannya)
-        data = {
-            'id': id_value,
-            'nama': name,
-            'gambar': filepath  # atau bisa disimpan path relatifnya
-        }
 
         # Proses gambar
         get_answer = scan_answer('images\lembar jawaban.jpg', filepath)
