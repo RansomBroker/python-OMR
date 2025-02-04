@@ -5,7 +5,6 @@ import imutils
 import json
 import math
 
-
 def align_images(image, template, maxFeatures=300, keepPercent=0.5, debug=False):
     # convert both the input image and template to grayscale
     imageGray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -130,17 +129,10 @@ def find_matching_answer(answerJsonPath, detected_circle, threshold=10):
                 # Calculate distance
                 distance = math.sqrt((x - cx)**2 + (y - cy)**2)
                 if distance <= threshold:
-                    # print(distance)
-                    # print(x, y, r)
-                    # print(cx, cy)
-                    # print(f"answer_position[{answer_idx}][{idx}]")  
-                    # Check if the answer is already selected
                     if answer_idx < 9 :
                         user_id_list[idx] = answer_idx 
-                    # print(user_id)
                     if answer_idx > 9:
                         answer_selected[answer_idx-10] = chr(idx + 65)
-                    # print(answer_selected)
 
     # Formated output
     user_id = "".join(map(str, user_id_list))

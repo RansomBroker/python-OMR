@@ -1,6 +1,7 @@
 import os
 from flask import Blueprint, request, jsonify
 from werkzeug.utils import secure_filename
+from main import scan_answer
 
 # Buat blueprint untuk mengorganisir routes
 api = Blueprint('api', __name__)
@@ -52,9 +53,9 @@ def upload_file():
             'gambar': filepath  # atau bisa disimpan path relatifnya
         }
 
-        return jsonify({
-            'message': 'File berhasil diunggah',
-            'data': data
-        }), 201
+        # Proses gambar
+        get_answer = scan_answer('images\lembar jawaban.jpg', filepath)
+
+        return jsonify({'result': get_answer})
     else:
         return jsonify({'error': 'Tipe file tidak diizinkan'}), 400
