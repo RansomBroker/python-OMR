@@ -1,7 +1,7 @@
 from utils import *
 import cv2
 
-def scan_answer(template_image, image_path):
+def scan_answer(template_image, image_path, answer_json):
     """
     Full processing pipeline:
     - Detect rectangles.
@@ -61,7 +61,7 @@ def scan_answer(template_image, image_path):
     # display_image(aligned_image)  
 
     # Matched Answer
-    (user_id, answer_selected) = find_matching_answer("answer_position.json", dark_circles_in_aligned_image)
+    (user_id, answer_selected) = find_matching_answer(answer_json, dark_circles_in_aligned_image)
 
     print(user_id, answer_selected)
     return {"error": None, "code": 0, "answer_selected": answer_selected, "user_id": user_id}

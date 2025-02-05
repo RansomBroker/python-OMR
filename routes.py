@@ -26,13 +26,6 @@ def upload_file():
 
     file = request.files['image']
     
-    # Retrieve additional data from the form
-    name = request.form.get('name')
-    id_value = request.form.get('id')
-
-    if not name or not id_value:
-        return jsonify({'error': 'Data nama dan id harus disertakan'}), 400
-
     # If no file is selected
     if file.filename == '':
         return jsonify({'error': 'Nama file kosong'}), 400
@@ -46,8 +39,8 @@ def upload_file():
         # Save the file
         file.save(filepath)
 
-        # Proses gambar
-        get_answer = scan_answer('images\lembar jawaban.jpg', filepath)
+        # Proses answer, adjust parameter as needeed
+        get_answer = scan_answer('images\lembar jawaban.jpg', filepath, answer_json="answer_position.json")
 
         return jsonify({'result': get_answer})
     else:
