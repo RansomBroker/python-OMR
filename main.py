@@ -30,11 +30,8 @@ def scan_answer(template_image, image_path, answer_json):
     print(f"Image Brightness Level: {img_brightness_level}")
     print(f"Template Brightness Level: {template_brightness_level}")
 
-    if img_brightness_level < 152:
+    if img_brightness_level < 150:
         return {"error": "Image brightness is too low.", "code": 2, "answer_selected": None, "user_id_detected": None}
-
-    # Adjust brightness to match template
-    # adjusted_img = adjust_brightness_to_match_template(img_brightness_level, template_brightness_level, img_with_rectangles, template_with_rectangles)
 
     # Crop the image with detected bounding boxes
     cropped_image_with_margin = crop_with_margin(img_with_rectangles, filled_rectangles)
@@ -51,6 +48,7 @@ def scan_answer(template_image, image_path, answer_json):
 
     # Detect dark circles on the aligned image
     lower_image_brightness = increase_image_brightness(aligned_image, 0.5)
+    print(detect_brightness_level(lower_image_brightness))
     dark_circles_in_aligned_image = detect_circles_in_cropped_image(lower_image_brightness)
 
     # If dark circles are detected, draw them on the aligned image in red
@@ -66,3 +64,6 @@ def scan_answer(template_image, image_path, answer_json):
     print(user_id, answer_selected)
     return {"error": None, "code": 0, "answer_selected": answer_selected, "user_id": user_id}
 
+# Run the full processing pipeline on the image with brightness adjustment
+# image_path = 'images\lembar valid2.jpg'  # Adjust the path as necessary
+# scan_answer("images\lembar jawaban.jpg", image_path, answer_json="answer_position.json")

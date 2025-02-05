@@ -5,7 +5,7 @@ import imutils
 import json
 import math
 
-def align_images(image, template, maxFeatures=300, keepPercent=0.5, debug=False):
+def align_images(image, template, maxFeatures=300, keepPercent=0.25, debug=False):
     # convert both the input image and template to grayscale
     imageGray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     templateGray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
