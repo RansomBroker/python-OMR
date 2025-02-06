@@ -10,7 +10,7 @@
 
 
 ##### Instalasi package dan menjalankan program 
-Install package dengan perintah `pip install -r requirenments.txt` setelah semua package terinstall maka jalankan perintah
+Install package dengan perintah `conda create --name omr-test --file requirenments.txt` setelah semua package terinstall maka jalankan perintah, lalu install `conda install conda-forge::imutils` untuk menginstall package imutils 
 `python app.py` untuk menjalankan server flask adapun cara menggunakan menggunakan postman atau curl dengan contoh 
 
 ``
