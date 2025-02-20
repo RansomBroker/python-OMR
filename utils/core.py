@@ -5,7 +5,7 @@ import imutils
 import json
 import math
 
-def align_images(image, template, maxFeatures=500, keepPercent=0.25, debug=False):
+def align_images(image, template, maxFeatures=300, keepPercent=0.25, debug=False):
     # convert both the input image and template to grayscale
     imageGray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     templateGray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
@@ -49,7 +49,7 @@ def align_images(image, template, maxFeatures=500, keepPercent=0.25, debug=False
 
     # compute the homography matrix between the two sets of matched
     # points
-    (H, mask) = cv2.findHomography(ptsA, ptsB, method=cv2.RANSAC)
+    H, _ = cv2.findHomography(ptsA, ptsB, method=cv2.RANSAC)
     # use the homography matrix to align the images
     (h, w) = template.shape[:2]
     aligned = cv2.warpPerspective(image, H, (w, h))

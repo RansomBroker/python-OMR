@@ -30,7 +30,7 @@ def scan_answer(template_image, image_path, answer_json):
     print(f"Image Brightness Level: {img_brightness_level}")
     print(f"Template Brightness Level: {template_brightness_level}")
 
-    if img_brightness_level < 150:
+    if img_brightness_level < 125:
         return {"error": "Image brightness is too low.", "code": 2, "answer_selected": None, "user_id_detected": None}
 
     # Crop the image with detected bounding boxes
@@ -56,14 +56,14 @@ def scan_answer(template_image, image_path, answer_json):
         cv2.circle(aligned_image, (x, y), r, (0, 0, 255), 4)  # Red circles
 
     # Display aligned image with dark circles
-    #display_image(aligned_image)  
+    display_image(aligned_image)  
 
     # Matched Answer
     (user_id, answer_selected) = find_matching_answer(answer_json, dark_circles_in_aligned_image)
 
-    print(user_id, answer_selected)
+
     return {"error": None, "code": 0, "answer_selected": answer_selected, "user_id": user_id}
 
 # Run the full processing pipeline on the image with brightness adjustment
-# image_path = 'images\lembar_2.jpg'  # Adjust the path as necessary
-# scan_answer("images\lembar jawaban.jpg", image_path, answer_json="answer_position.json")
+image_path = 'images\lembar_3.jpg'  # Adjust the path as necessary
+print(scan_answer("images\lembar jawaban.jpg", image_path, answer_json="answer_position.json"))
