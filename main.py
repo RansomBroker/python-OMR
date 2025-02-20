@@ -56,7 +56,7 @@ def scan_answer(template_image, image_path, answer_json):
         cv2.circle(aligned_image, (x, y), r, (0, 0, 255), 4)  # Red circles
 
     # Display aligned image with dark circles
-    # display_image(aligned_image)  
+    #display_image(aligned_image)  
 
     # Matched Answer
     (user_id, answer_selected) = find_matching_answer(answer_json, dark_circles_in_aligned_image)
@@ -65,5 +65,5 @@ def scan_answer(template_image, image_path, answer_json):
     return {"error": None, "code": 0, "answer_selected": answer_selected, "user_id": user_id}
 
 # Run the full processing pipeline on the image with brightness adjustment
-# image_path = 'images\lembar valid2.jpg'  # Adjust the path as necessary
+# image_path = 'images\lembar_2.jpg'  # Adjust the path as necessary
 # scan_answer("images\lembar jawaban.jpg", image_path, answer_json="answer_position.json")

@@ -5,7 +5,7 @@ import imutils
 import json
 import math
 
-def align_images(image, template, maxFeatures=300, keepPercent=0.25, debug=False):
+def align_images(image, template, maxFeatures=500, keepPercent=0.25, debug=False):
     # convert both the input image and template to grayscale
     imageGray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     templateGray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
@@ -92,7 +92,10 @@ def detect_circles_in_cropped_image(image):
     # Convert to grayscale for Hough Circle detection
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    blurred = cv2.GaussianBlur(gray_image, (19, 19), 0)
+    # Apply a binary threshold using Otsu's method to the grayscale image
+    _, binary_image = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+
+    blurred = cv2.GaussianBlur(binary_image, (11, 11), 0)
     
     # Use HoughCircles to detect circles
     circles = cv2.HoughCircles(
@@ -100,20 +103,20 @@ def detect_circles_in_cropped_image(image):
         cv2.HOUGH_GRADIENT, dp=1.2, minDist=5, param1=50, param2=24, minRadius=5, maxRadius=15
     )
 
-    dark_circles = []
+    filled_circles = []
 
     if circles is not None:
         circles = np.round(circles[0, :]).astype("int")
         for (x, y, r) in circles:
             # Crop the area around the circle
-            cropped = gray_image[y-r:y+r, x-r:x+r]
+            cropped = binary_image[y-r:y+r, x-r:x+r]
             
             # Calculate the mean intensity in the cropped area
             mean_intensity = np.mean(cropped)
-            if mean_intensity < 100:  # Dark intensity check for circles
-                dark_circles.append((x, y, r))
+            if mean_intensity > 125:  # White intensity check for filled circles
+                filled_circles.append((x, y, r))
 
-    return dark_circles
+    return filled_circles
 
 def find_matching_answer(answerJsonPath, detected_circle, threshold=10):
     answer_selected = ["-" for i in range(60)]
