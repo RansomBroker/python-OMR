@@ -46,6 +46,10 @@ def scan_answer(template_image, image_path, answer_json):
     # Align Image
     aligned_image = align_images(cropped_image_with_margin, template_cropped_image_with_margin, debug=False)
 
+    # Ensure the aligned image is in BGR format
+    if len(aligned_image.shape) == 2 or aligned_image.shape[2] == 1:
+        aligned_image = cv2.cvtColor(aligned_image, cv2.COLOR_GRAY2BGR)
+
     # Detect dark circles on the aligned image
     lower_image_brightness = increase_image_brightness(aligned_image, 0.5)
     print(detect_brightness_level(lower_image_brightness))
@@ -53,7 +57,7 @@ def scan_answer(template_image, image_path, answer_json):
 
     # If dark circles are detected, draw them on the aligned image in red
     for (x, y, r) in dark_circles_in_aligned_image:
-        cv2.circle(aligned_image, (x, y), r, (0, 0, 255), 4)  # Red circles
+        cv2.circle(aligned_image, (x, y), r, (0, 0, 255), 4)  
 
     # Display aligned image with dark circles
     display_image(aligned_image)  

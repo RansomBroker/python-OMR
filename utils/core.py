@@ -1,60 +1,43 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-import imutils
 import json
 import math
 
-def align_images(image, template, maxFeatures=300, keepPercent=0.25, debug=False):
+def align_images(image, template, maxFeatures=5000, keepPercent=0.1, debug=False):
     # convert both the input image and template to grayscale
     imageGray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     templateGray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
 
-    # use ORB to detect keypoints and extract (binary) local
-    # invariant features
+    # Initialize ORB detector
     orb = cv2.ORB_create(maxFeatures)
-    (kpsA, descsA) = orb.detectAndCompute(imageGray, None)
-    (kpsB, descsB) = orb.detectAndCompute(templateGray, None)
-    # match the features
-    method = cv2.DESCRIPTOR_MATCHER_BRUTEFORCE_HAMMING
-    matcher = cv2.DescriptorMatcher_create(method)
-    matches = matcher.match(descsA, descsB, None)
+    
+    # Find keypoints and descriptors with ORB
+    keypoints1, descriptors1 = orb.detectAndCompute(templateGray, None)
+    keypoints2, descriptors2 = orb.detectAndCompute(imageGray, None)
+    
+    # Match features using BFMatcher
+    bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+    matches = bf.match(descriptors1, descriptors2)
+    
+    # Sort matches by distance
+    matches = sorted(matches, key=lambda x: x.distance)
+    
+    # Use the top matches for homography
+    num_good_matches = int(len(matches) * keepPercent)  # Take the best 10% matches
+    good_matches = matches[:num_good_matches]
+    
+    # Extract location of good matches
+    points1 = np.float32([keypoints1[m.queryIdx].pt for m in good_matches]).reshape(-1, 1, 2)
+    points2 = np.float32([keypoints2[m.trainIdx].pt for m in good_matches]).reshape(-1, 1, 2)
+    
+    # Compute homography matrix
+    H, mask = cv2.findHomography(points2, points1, cv2.RANSAC, 5.0)
+    
+    # Warp image using the homography matrix
+    aligned_image = cv2.warpPerspective(imageGray, H, (templateGray.shape[1], templateGray.shape[0]))
 
-    # sort the matches by their distance (the smaller the distance,
-    # the "more similar" the features are)
-    matches = sorted(matches, key=lambda x:x.distance)
-    # keep only the top matches
-    keep = int(len(matches) * keepPercent)
-    matches = matches[:keep]
-
-    # check to see if we should visualize the matched keypoints
-    if debug:
-        matchedVis = cv2.drawMatches(image, kpsA, template, kpsB,
-            matches, None)
-        matchedVis = imutils.resize(matchedVis, width=1000)
-        cv2.imshow("Matched Keypoints", matchedVis)
-        cv2.waitKey(0)
-
-    # allocate memory for the keypoints (x, y)-coordinates from the
-    # top matches -- we'll use these coordinates to compute our
-    # homography matrix
-    ptsA = np.zeros((len(matches), 2), dtype="float")
-    ptsB = np.zeros((len(matches), 2), dtype="float")
-    # loop over the top matches
-    for (i, m) in enumerate(matches):
-        # indicate that the two keypoints in the respective images
-        # map to each other
-        ptsA[i] = kpsA[m.queryIdx].pt
-        ptsB[i] = kpsB[m.trainIdx].pt
-
-    # compute the homography matrix between the two sets of matched
-    # points
-    H, _ = cv2.findHomography(ptsA, ptsB, method=cv2.RANSAC)
-    # use the homography matrix to align the images
-    (h, w) = template.shape[:2]
-    aligned = cv2.warpPerspective(image, H, (w, h))
-    # return the aligned image
-    return aligned
+    return aligned_image
 
 def detect_filled_rectangles_with_adjusted_filters(image):
     """
