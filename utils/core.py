@@ -96,7 +96,7 @@ def detect_circles_in_cropped_image(image):
             
             # Calculate the mean intensity in the cropped area
             mean_intensity = np.mean(cropped)
-            if mean_intensity > 125:  # White intensity check for filled circles
+            if mean_intensity > 100:  # White intensity check for filled circles
                 filled_circles.append((x, y, r))
 
     return filled_circles

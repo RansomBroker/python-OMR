@@ -65,9 +65,8 @@ def scan_answer(template_image, image_path, answer_json):
     # Matched Answer
     (user_id, answer_selected) = find_matching_answer(answer_json, dark_circles_in_aligned_image)
 
-
     return {"error": None, "code": 0, "answer_selected": answer_selected, "user_id": user_id}
 
 # Run the full processing pipeline on the image with brightness adjustment
-image_path = 'images\lembar_3.jpg'  # Adjust the path as necessary
-print(scan_answer("images\lembar jawaban.jpg", image_path, answer_json="answer_position.json"))
+# image_path = 'images\lembar_2.jpg'  # Adjust the path as necessary
+# print(scan_answer("images\lembar jawaban.jpg", image_path, answer_json="answer_position.json"))
