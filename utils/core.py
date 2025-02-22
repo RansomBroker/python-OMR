@@ -15,6 +15,17 @@ def align_images(image, template, maxFeatures=5000, keepPercent=0.1, debug=False
     # Find keypoints and descriptors with ORB
     keypoints1, descriptors1 = orb.detectAndCompute(templateGray, None)
     keypoints2, descriptors2 = orb.detectAndCompute(imageGray, None)
+
+     # Ensure descriptors are not None and of the same type
+    if descriptors1 is None or descriptors2 is None:
+        raise ValueError("Descriptors cannot be None")
+    
+    if descriptors1.dtype != descriptors2.dtype:
+        descriptors1 = descriptors1.astype(descriptors2.dtype)
+    
+    if descriptors1.shape[1] != descriptors2.shape[1]:
+        raise ValueError("Descriptors must have the same number of columns")
+    
     
     # Match features using BFMatcher
     bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
@@ -96,14 +107,14 @@ def detect_circles_in_cropped_image(image):
             
             # Calculate the mean intensity in the cropped area
             mean_intensity = np.mean(cropped)
-            if mean_intensity > 100:  # White intensity check for filled circles
+            if mean_intensity > 150:  # White intensity check for filled circles
                 filled_circles.append((x, y, r))
 
     return filled_circles
 
 def find_matching_answer(answerJsonPath, detected_circle, threshold=10):
     answer_selected = ["-" for i in range(60)]
-    user_id_list = [0,0,0,0,0,0,0]
+    user_id_list = [0,0,0,0,0,0,0,0,0]
 
     with open(answerJsonPath, 'r') as file:
         answer_position = json.load(file)

@@ -16,7 +16,7 @@ def scan_answer(template_image, image_path, answer_json):
     filled_rectangles = detect_filled_rectangles_with_adjusted_filters(img)
     template_rectangles = detect_filled_rectangles_with_adjusted_filters(template)
 
-    if len(filled_rectangles) == 0:
+    if len(filled_rectangles) < 27 :
         return {"error": "No filled rectangles detected.", "code": 1, "answer_selected": None, "user_id_detected": None}
 
     # Draw rectangles on the image
@@ -38,10 +38,10 @@ def scan_answer(template_image, image_path, answer_json):
     template_cropped_image_with_margin = crop_with_margin(template_with_rectangles, template_rectangles)
 
     # Display images
-    #display_image(adjusted_img)  # Show image with adjusted brightness
-    #display_image(cropped_image_with_margin)  # Show cropped image with detected circles
-    #display_image(template_with_rectangles)  # Show template image with rectangles
-    #display_image(template_cropped_image_with_margin)  # Show cropped template image
+    # display_image(img_with_rectangles)  # Show image with detected rectangles
+    # display_image(cropped_image_with_margin)  # Show cropped image with detected circles
+    # display_image(template_with_rectangles)  # Show template image with rectangles
+    # display_image(template_cropped_image_with_margin)  # Show cropped template image
 
     # Align Image
     aligned_image = align_images(cropped_image_with_margin, template_cropped_image_with_margin, debug=False)
@@ -60,7 +60,7 @@ def scan_answer(template_image, image_path, answer_json):
         cv2.circle(aligned_image, (x, y), r, (0, 0, 255), 4)  
 
     # Display aligned image with dark circles
-    display_image(aligned_image)  
+    # display_image(aligned_image)  
 
     # Matched Answer
     (user_id, answer_selected) = find_matching_answer(answer_json, dark_circles_in_aligned_image)
@@ -68,5 +68,5 @@ def scan_answer(template_image, image_path, answer_json):
     return {"error": None, "code": 0, "answer_selected": answer_selected, "user_id": user_id}
 
 # Run the full processing pipeline on the image with brightness adjustment
-# image_path = 'images\lembar_2.jpg'  # Adjust the path as necessary
+# image_path = 'images\lembar_1.jpg'  # Adjust the path as necessary
 # print(scan_answer("images\lembar jawaban.jpg", image_path, answer_json="answer_position.json"))
